@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { audioService } from "@/services/AudioService";
+import type { SynthConfig, EffectConfig } from "@/store/useAudioSettingsStore";
 
 export function useAudio() {
   const [isReady, setIsReady] = useState(false);
@@ -70,6 +71,24 @@ export function useAudio() {
     audioService.setVolume(volume);
   }, []);
 
+  // 更新合成器配置
+  const updateSynth = useCallback((config: SynthConfig) => {
+    audioService.updateSynth(config);
+  }, []);
+
+  // 更新效果器配置
+  const updateEffects = useCallback((configs: EffectConfig[]) => {
+    audioService.updateEffects(configs);
+  }, []);
+
+  // 更新单个效果器参数
+  const updateEffectParam = useCallback(
+    (type: string, param: string, value: number) => {
+      audioService.updateEffectParam(type, param, value);
+    },
+    []
+  );
+
   return {
     isReady,
     initAudio,
@@ -81,5 +100,8 @@ export function useAudio() {
     attackChord,
     releaseAll,
     setVolume,
+    updateSynth,
+    updateEffects,
+    updateEffectParam,
   };
 }

@@ -275,8 +275,8 @@ export default function CircleOfFifths({ playMode = "root" }: CircleOfFifthsProp
       await initAudio();
     }
 
-    // 标准化音符名称并添加八度
-    const noteName = normalizeNoteName(foundKey.name.toUpperCase());
+    // 标准化音符名称并添加八度（normalizeNoteName 内部处理大小写和等音转换）
+    const noteName = normalizeNoteName(foundKey.name);
     const rootNote = `${noteName}3`;
     const isMinor = foundKey.isMinor;
 

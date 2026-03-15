@@ -9,8 +9,7 @@ export default function KeyboardLayout({
     <div className="flex flex-col h-full">
       {/* 上半部分：固定高度的键盘展示区域 */}
       <div className="flex-shrink-0 p-4 bg-zinc-700 rounded-lg mb-4">
-        <h2 className="text-lg font-semibold text-zinc-100 mb-3">键盘</h2>
-        <Piano octaves={4} startOctave={2} />
+        <Piano defaultOctaves={4} defaultStartOctave={2} centerOctave={3} />
       </div>
 
       {/* 下半部分：子路由内容 */}

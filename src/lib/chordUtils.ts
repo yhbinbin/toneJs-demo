@@ -48,10 +48,31 @@ export interface ChordResult {
 
 /**
  * 获取音符在音阶中的索引
+ * 支持降号输入，内部转换为升号
  */
 export function getNoteIndex(note: string): number {
   // 提取音名（去除八度数字）
-  const noteName = note.replace(/\d+$/, "");
+  let noteName = note.replace(/\d+$/, "");
+  
+  // 等音转换：降号转升号
+  const enharmonicMap: Record<string, string> = {
+    "Db": "C#",
+    "Eb": "D#",
+    "Gb": "F#",
+    "Ab": "G#",
+    "Bb": "A#",
+    "Cb": "B",
+    "Fb": "E",
+  };
+  
+  // 标准化格式（如 "bb" -> "Bb" -> "A#"）
+  if (noteName.length === 2 && noteName[1].toLowerCase() === "b" && noteName[0] !== "A" && noteName[0] !== "a") {
+    const normalized = noteName[0].toUpperCase() + "b";
+    if (enharmonicMap[normalized]) {
+      noteName = enharmonicMap[normalized];
+    }
+  }
+  
   return NOTES.indexOf(noteName as NoteName);
 }
 
@@ -199,19 +220,30 @@ export function getMinorSeventhChord(rootNote: string): string[] {
 
 /**
  * 标准化音符名称（处理等音转换，如 Db -> C#）
+ * 支持各种大小写输入
  */
 export function normalizeNoteName(name: string): string {
   const enharmonicMap: Record<string, string> = {
-    "Db": "C#",
-    "Eb": "D#",
-    "Gb": "F#",
-    "Ab": "G#",
-    "Bb": "A#",
-    "Cb": "B",
-    "Fb": "E",
+    "DB": "C#",
+    "EB": "D#",
+    "GB": "F#",
+    "AB": "G#",
+    "BB": "A#",
+    "CB": "B",
+    "FB": "E",
   };
   
-  // 处理如 "Db/C#" 这样的格式，取第一个
-  const firstName = name.split("/")[0].trim();
-  return enharmonicMap[firstName] || firstName;
+  // 处理如 "Db/C#" 或 "bb/a#" 这样的格式，取第一个
+  const firstName = name.split("/")[0].trim().toUpperCase();
+  
+  // 检查是否需要等音转换
+  if (enharmonicMap[firstName]) {
+    return enharmonicMap[firstName];
+  }
+  
+  // 标准化格式：第一个字母大写，后续小写（如 C#, D#）
+  if (firstName.length === 1) {
+    return firstName;
+  }
+  return firstName[0] + firstName.slice(1).toLowerCase();
 }
